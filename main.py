@@ -1,5 +1,5 @@
 import os
-import pandas as pd #Used to read csv file
+import pandas as pd #Used to read csv file or reads data from a dataframe
 from pydub import AudioSegment
 from gtts import gTTS
 
@@ -10,11 +10,17 @@ from gtts import gTTS
 
 def textToSpeech(text,filename):
     '''It will spit out the given 'filename' amd wil speak given 'text' '''
-    pass
+    mytext=str(text)
+    language='hi'
+    myobj=gTTS(text=mytext,lang=language,slow=False)
+    myobj.save(filename)
 
 def mergeAudios(audios):
     '''This function returns pydub audio segment '''
-    pass
+    combined=AudioSegment.empty()
+    for audio in audios:
+        combined+=AudioSegment.from_mp3(audio)
+    return combined    
 
 def generateSkeleton():
     '''It will generate pieces from the given file and then stitch them according to us'''
@@ -33,6 +39,7 @@ def generateSkeleton():
     finish=92200
     audioProcessed=audio[start:finish]
     audioProcessed.export('3_hindi.mp3',format='mp3')
+
     #4.Generate -via city
 
     #5.Generate -ke raste
@@ -71,11 +78,25 @@ def generateAnnouncement(filename):
     '''It will take an excel file and will generate an announcement from that'''
     df=pd.read_excel(filename)
     print(df)
+    for index,item in df.iterrows():
+        #2.Generate -from city 
+        textToSpeech(item['from'],'2_hindi.mp3')
+        #4.Generate -via city
+        textToSpeech(item['via'],'4_hindi.mp3')
+        #6.Generate -to city
+        textToSpeech(item['to'],'6_hindi.mp3')
+        #8.Generate -train no. and name
+        textToSpeech(item['train_no']+' '+item['train_name'],'8_hindi.mp3')
+        #10.Generate -platform no.
+        textToSpeech(item['platform'],'10_hindi.mp3')
+
+        audios=[f'{i}_hindi.mp3' for i in range(1,12)]
+        announcement=mergeAudios(audios)
+        announcement.export(f"announcement_{item['train_no']}_{index+1}.mp3",format='mp3')
 
 if __name__ == "__main__":
     
     print('Generating skeleton...')
     generateSkeleton()
-    print('Skeleton generated')
     print('Now generating announcement...')
     generateAnnouncement('announce_hindi.xlsx')
