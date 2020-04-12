@@ -12,19 +12,19 @@ def textToSpeech(text,filename):
     '''It will spit out the given 'filename' amd wil speak given 'text' '''
     mytext=str(text)
     language='hi'
-    myobj=gTTS(text=mytext,lang=language,slow=False)
-    myobj.save(filename)
+    myobj=gTTS(text=mytext,lang=language,slow=False)#Converts text written in the excel file to speech
+    myobj.save(filename)#Saves the speech in the specified file
 
 def mergeAudios(audios):
     '''This function returns pydub audio segment '''
-    combined=AudioSegment.empty()
+    combined=AudioSegment.empty()# Makes an empty audio file
     for audio in audios:
-        combined+=AudioSegment.from_mp3(audio)
+        combined+=AudioSegment.from_mp3(audio)#Accumulates smaller chunks to integrate into a larger
     return combined    
 
 def generateSkeleton():
     '''It will generate pieces from the given file and then stitch them according to us'''
-    audio=AudioSegment.from_mp3('announcement.mp3')
+    audio=AudioSegment.from_mp3('announcement.mp3')#Converts mp3 file to python object
 
     #1.Generate -Kripya dhyaan dijiye
     start=88000
@@ -37,8 +37,8 @@ def generateSkeleton():
     #3.Generate -se chalkar
     start=91000
     finish=92200
-    audioProcessed=audio[start:finish]
-    audioProcessed.export('3_hindi.mp3',format='mp3')
+    audioProcessed=audio[start:finish]#Breaks the audio accordingly
+    audioProcessed.export('3_hindi.mp3',format='mp3')#Converts python object to mp3 file
 
     #4.Generate -via city
 
